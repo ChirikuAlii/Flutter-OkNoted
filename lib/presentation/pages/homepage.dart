@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:okoted/app/app_color.dart';
 import 'package:okoted/presentation/widget/toolbar.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -11,7 +13,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-
+  final snackBar = SnackBar(
+    content: const Text('Yay! A SnackBar!'),
+    action: SnackBarAction(
+      label: 'Undo',
+      onPressed: () {
+        // Some code to undo the change.
+      },
+    ),
+  );
   void _incrementCounter() {
     setState(() {
       _counter++;
@@ -44,9 +54,11 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
+        backgroundColor: AppColors.greyEsclipe,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
+          color: AppColors.greyEsclipe,
           shape: CircularNotchedRectangle(),
           notchMargin: 8,
           child: Container(
@@ -56,27 +68,53 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 Expanded(
                   child: Container(
-                    color: Colors.blueGrey,
+                    margin: EdgeInsets.fromLTRB(16, 0, 0, 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
-                          "assets/toolbar/more.svg",
-                          width: 32,
-                          height: 24,
+                        GestureDetector(
+                          onTap: () {
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          },
+                          child: SvgPicture.asset(
+                            "assets/toolbar/more.svg",
+                            color: Colors.white,
+                            width: 32,
+                            height: 24,
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                Container(
+                GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(snackBar);
+                  },
+                  child: Container(
+                      child: SvgPicture.asset(
+                    "assets/ic_searchh.svg",
                     width: 32,
                     height: 24,
-                    child: SvgPicture.asset("assets/toolbar/more.svg")),
-                Container(
-                    width: 32,
-                    height: 24,
-                    child: SvgPicture.asset("assets/toolbar/more.svg")),
+                  )),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(snackBar);
+                  },
+                  child: Container(
+                      margin: EdgeInsets.fromLTRB(32, 0, 16, 0),
+                      child: SvgPicture.asset(
+                        "assets/ic_notification.svg",
+                        color: Colors.white,
+                        width: 32,
+                        height: 24,
+                      )),
+                ),
               ],
             ),
           )),
