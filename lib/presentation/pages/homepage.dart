@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:okoted/app/app_color.dart';
+import 'package:okoted/app/app_vector.dart';
 import 'package:okoted/presentation/widget/toolbar.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -13,6 +14,33 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  List<String> items = [
+    "tes",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+    "yahh",
+  ];
+
   final snackBar = SnackBar(
     content: const Text('Yay! A SnackBar!'),
     action: SnackBarAction(
@@ -22,6 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     ),
   );
+
   void _incrementCounter() {
     setState(() {
       _counter++;
@@ -33,25 +62,25 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: OkNotedToolbar(Size(double.infinity, 100)),
       body: Container(
+        color: Colors.white,
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                'You have pushed the button this many times:',
-              ),
-              Text(
-                '$_counter',
-                style: Theme.of(context).textTheme.headline4,
-              ),
-            ],
-          ),
-        ),
+        child: ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              return widgetListNote();
+            }),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {
+          showModalBottomSheet(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+              context: context,
+              builder: (context) {
+                return widgetModalBottomSheetAddNote();
+              });
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
         backgroundColor: AppColors.greyEsclipe,
@@ -60,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomAppBar(
           color: AppColors.greyEsclipe,
           shape: CircularNotchedRectangle(),
-          notchMargin: 8,
+          notchMargin: 5,
           child: Container(
             height: 60,
             child: Row(
@@ -74,12 +103,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         GestureDetector(
                           onTap: () {
-
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(snackBar);
                           },
                           child: SvgPicture.asset(
-                            "assets/toolbar/more.svg",
+                            AppVectors.more,
                             color: Colors.white,
                             width: 32,
                             height: 24,
@@ -91,25 +119,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(snackBar);
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   },
                   child: Container(
                       child: SvgPicture.asset(
-                    "assets/ic_searchh.svg",
+                    AppVectors.search,
                     width: 32,
                     height: 24,
                   )),
                 ),
                 GestureDetector(
                   onTap: () {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(snackBar);
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   },
                   child: Container(
                       margin: EdgeInsets.fromLTRB(32, 0, 16, 0),
                       child: SvgPicture.asset(
-                        "assets/ic_notification.svg",
+                        AppVectors.notification,
                         color: Colors.white,
                         width: 32,
                         height: 24,
@@ -118,6 +144,91 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           )),
+    );
+  }
+
+  Widget widgetModalBottomSheetAddNote() {
+    return Container(
+      margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Column(
+        children: [
+          TextField(
+            cursorColor: AppColors.greyDim,
+            style: TextStyle(fontSize: 20, color: Colors.black),
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: "Task name",
+                hintStyle: TextStyle(color: AppColors.greyDim)),
+          ),
+          TextField(
+            cursorColor: AppColors.greyDim,
+            style: TextStyle(fontSize: 16, color: Colors.black),
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: "Description",
+                hintStyle: TextStyle(color: AppColors.greyDim)),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget widgetListNote() {
+    return Container(
+      margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text("Dog Sitting",
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black)),
+            ],
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Row(
+            children: [
+              Text(
+                "Feb 20 2020",
+                style: TextStyle(color: AppColors.greyDark, fontSize: 15),
+              ),
+              SizedBox(
+                width: 4,
+              ),
+              Card(
+                color: AppColors.whiteSmoke,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                elevation: 0,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                  child: Text("Travel"),
+                ),
+              ),
+              Expanded(child: Container()),
+              Text("Personal"),
+              SizedBox(
+                width: 8,
+              ),
+              Container(
+                  width: 8,
+                  height: 8.0,
+                  decoration: new BoxDecoration(
+                    color: Colors.orange,
+                    shape: BoxShape.circle,
+                  ))
+            ],
+          ),
+          Divider(
+            color: Color(0xFF9C9B9B),
+            height: 16,
+          )
+        ],
+      ),
     );
   }
 }
