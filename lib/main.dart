@@ -1,8 +1,23 @@
-import 'package:flutter/material.dart';
-import 'package:okoted/presentation/pages/homepage.dart';
+import 'dart:io';
 
-void main() {
-  runApp(const MyApp());
+import 'package:flutter/material.dart';
+import 'package:okoted/data/local/box/note_model.dart';
+import 'package:okoted/data/local/ok_noted_db.dart';
+import 'package:okoted/presentation/pages/homepage.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final document = await getApplicationDocumentsDirectory();
+  Hive.init(document.path);
+  Hive.registerAdapter(NoteModelAdapter());
+
+  await Hive.openBox<NoteModel>(OkNotedDB.todoBox);
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

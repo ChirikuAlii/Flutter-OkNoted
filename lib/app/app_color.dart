@@ -6,4 +6,5 @@ class AppColors {
   static const greyDim = Color(0xff6C6C6C);
 
   static const whiteSmoke = Color(0xffF2F2F2);
+  static const whiteGainsboro = Color(0xffE6E6E6);
 }

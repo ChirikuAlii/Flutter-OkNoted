@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:okoted/app/app_color.dart';
 import 'package:okoted/app/app_vector.dart';
+import 'package:okoted/data/local/dao/note_dao.dart';
+import 'package:okoted/data/local/box/note_model.dart';
 import 'package:okoted/presentation/widget/toolbar.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -13,33 +15,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  List<String> items = [
-    "tes",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-    "yahh",
-  ];
+  final titleEditController = TextEditingController();
+  final descEditController = TextEditingController();
 
   final snackBar = SnackBar(
     content: const Text('Yay! A SnackBar!'),
@@ -51,12 +28,6 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
   );
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,10 +36,15 @@ class _MyHomePageState extends State<MyHomePage> {
         color: Colors.white,
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        child: ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              return widgetListNote();
+        child: ValueListenableBuilder<Box<NoteModel>>(
+            valueListenable: NoteDao.noteBox.listenable(),
+            builder: (context, data, _) {
+              var items = data.values.toList().cast<NoteModel>();
+              return ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return widgetListNote(items[index]);
+                  });
             }),
       ),
       floatingActionButton: FloatingActionButton(
@@ -151,8 +127,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return Container(
       margin: EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextField(
+            controller: titleEditController,
             cursorColor: AppColors.greyDim,
             style: TextStyle(fontSize: 20, color: Colors.black),
             decoration: InputDecoration(
@@ -161,26 +139,62 @@ class _MyHomePageState extends State<MyHomePage> {
                 hintStyle: TextStyle(color: AppColors.greyDim)),
           ),
           TextField(
+            controller: descEditController,
             cursorColor: AppColors.greyDim,
             style: TextStyle(fontSize: 16, color: Colors.black),
             decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: "Description",
                 hintStyle: TextStyle(color: AppColors.greyDim)),
+          ),
+          SizedBox(
+            height: 16,
+          ),
+          Row(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border:
+                        Border.all(width: 2, color: AppColors.whiteGainsboro)),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    "Inbox",
+                    style: TextStyle(fontSize: 16, color: AppColors.greyDim),
+                  ),
+                ),
+              ),
+              Expanded(child: Container()),
+              GestureDetector(
+                onTap: () {
+                  final noteModel = NoteModel(
+                      title: titleEditController.text,
+                      date: DateTime.now().toString(),
+                      desc: descEditController.text,
+                      project: "Personal");
+                  addNote(noteModel);
+                },
+                child: Icon(
+                  Icons.send_outlined,
+                  color: AppColors.greyDark,
+                ),
+              )
+            ],
           )
         ],
       ),
     );
   }
 
-  Widget widgetListNote() {
+  Widget widgetListNote(NoteModel item) {
     return Container(
       margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(
         children: [
           Row(
             children: [
-              Text("Dog Sitting",
+              Text(item.title,
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -230,5 +244,20 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+  }
+
+  Future addNote(NoteModel note) async {
+    setState(() {
+      NoteDao.addNote(note);
+      //items.add(note);
+    });
+  }
+
+  @override
+  void dispose() {
+    titleEditController.dispose();
+    descEditController.dispose();
+    NoteDao.noteBox.close();
+    super.dispose();
   }
 }
