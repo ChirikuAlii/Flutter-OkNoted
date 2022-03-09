@@ -6,6 +6,7 @@ import 'package:okoted/app/app_vector.dart';
 import 'package:okoted/data/local/dao/note_dao.dart';
 import 'package:okoted/data/local/box/note_model.dart';
 import 'package:okoted/presentation/widget/toolbar.dart';
+import 'package:intl/intl.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -40,11 +41,20 @@ class _MyHomePageState extends State<MyHomePage> {
             valueListenable: NoteDao.noteBox.listenable(),
             builder: (context, data, _) {
               var items = data.values.toList().cast<NoteModel>();
-              return ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    return widgetListNote(items[index]);
-                  });
+
+              if (items.isEmpty) {
+                return Center(
+                  child: Text("Empty"),
+                );
+              } else {
+                var dateDefault = items[0].date;
+
+                return ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      return widgetListNote(items[index]);
+                    });
+              }
             }),
       ),
       floatingActionButton: FloatingActionButton(
@@ -207,24 +217,15 @@ class _MyHomePageState extends State<MyHomePage> {
           Row(
             children: [
               Text(
-                "Feb 20 2020",
+                convertFormatDate(
+                    item.date, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"),
                 style: TextStyle(color: AppColors.greyDark, fontSize: 15),
               ),
               SizedBox(
                 width: 4,
               ),
-              Card(
-                color: AppColors.whiteSmoke,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                elevation: 0,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                  child: Text("Travel"),
-                ),
-              ),
               Expanded(child: Container()),
-              Text("Personal"),
+              Text(item.project),
               SizedBox(
                 width: 8,
               ),
@@ -249,8 +250,18 @@ class _MyHomePageState extends State<MyHomePage> {
   Future addNote(NoteModel note) async {
     setState(() {
       NoteDao.addNote(note);
+      Navigator.of(context).pop();
       //items.add(note);
     });
+  }
+
+  String convertFormatDate(
+      String dateTime, String sourceFormat, String resultFormat) {
+    var dateTimeOld = DateFormat(sourceFormat).parse(dateTime);
+    var dateTimeNew = DateFormat(resultFormat).format(dateTimeOld);
+
+    print("date beofre ${dateTimeOld.toString()},, date after ${dateTimeNew}");
+    return dateTimeNew;
   }
 
   @override
