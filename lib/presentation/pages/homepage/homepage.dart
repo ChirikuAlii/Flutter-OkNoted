@@ -47,12 +47,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Text("Empty"),
                 );
               } else {
-                var dateDefault = items[0].date;
-
                 return ListView.builder(
                     itemCount: items.length,
                     itemBuilder: (context, index) {
-                      return widgetListNote(items[index]);
+                      return InkWell(
+                        child: widgetListNote(items[index]),
+                        onTap: () => {
+                          showModalBottomSheet(
+                              isScrollControlled: true,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                              context: context,
+                              builder: (context) {
+                                return widgetDetailNote(items[index]);
+                              })
+                        },
+                      );
                     });
               }
             }),
@@ -242,6 +252,53 @@ class _MyHomePageState extends State<MyHomePage> {
             color: Color(0xFF9C9B9B),
             height: 16,
           )
+        ],
+      ),
+    );
+  }
+
+  Widget widgetDetailNote(NoteModel item) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.25,
+      margin: EdgeInsets.fromLTRB(16, 24, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                  width: 8,
+                  height: 8.0,
+                  decoration: new BoxDecoration(
+                    color: Colors.orange,
+                    shape: BoxShape.circle,
+                  )),
+              SizedBox(
+                width: 8,
+              ),
+              Text(item.project),
+              Expanded(child: Container()),
+              Text(
+                convertFormatDate(
+                    item.date, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"),
+                style: TextStyle(color: AppColors.greyDim, fontSize: 14),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 16,
+          ),
+          Text(
+            item.title,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(
+            height: 16,
+          ),
+          Text(
+            item.desc,
+            style: TextStyle(color: AppColors.greyDim, fontSize: 16),
+          ),
         ],
       ),
     );

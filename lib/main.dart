@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:okoted/data/local/box/note_model.dart';
 import 'package:okoted/data/local/ok_noted_db.dart';
-import 'package:okoted/presentation/pages/homepage.dart';
+import 'package:okoted/presentation/pages/homepage/homepage.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
