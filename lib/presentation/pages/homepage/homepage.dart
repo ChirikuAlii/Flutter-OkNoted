@@ -55,8 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         onTap: () => {
                           showModalBottomSheet(
                               isScrollControlled: true,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
+                              backgroundColor: Colors.transparent,
                               context: context,
                               builder: (context) {
                                 return widgetDetailNote(items[index]);
@@ -258,50 +257,67 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget widgetDetailNote(NoteModel item) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.25,
-      margin: EdgeInsets.fromLTRB(16, 24, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                  width: 8,
-                  height: 8.0,
-                  decoration: new BoxDecoration(
-                    color: Colors.orange,
-                    shape: BoxShape.circle,
-                  )),
-              SizedBox(
-                width: 8,
-              ),
-              Text(item.project),
-              Expanded(child: Container()),
-              Text(
-                convertFormatDate(
-                    item.date, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"),
-                style: TextStyle(color: AppColors.greyDim, fontSize: 14),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          Text(
-            item.title,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          Text(
-            item.desc,
-            style: TextStyle(color: AppColors.greyDim, fontSize: 16),
-          ),
-        ],
-      ),
-    );
+    return DraggableScrollableSheet(
+        initialChildSize: 0.3,
+        maxChildSize: 0.9,
+        builder: (_, controller) {
+          return Container(
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+            child: ListView(
+              controller: controller,
+              children: [
+                Container(
+                  padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                              width: 8,
+                              height: 8.0,
+                              decoration: new BoxDecoration(
+                                color: Colors.orange,
+                                shape: BoxShape.circle,
+                              )),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(item.project),
+                          Expanded(child: Container()),
+                          Text(
+                            convertFormatDate(
+                                item.date, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"),
+                            style: TextStyle(
+                                color: AppColors.greyDim, fontSize: 14),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Text(
+                        item.title,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Text(
+                        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                        style:
+                            TextStyle(color: AppColors.greyDim, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   Future addNote(NoteModel note) async {
