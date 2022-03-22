@@ -9,9 +9,11 @@ class OkNotedToolbar extends StatelessWidget with PreferredSizeWidget {
     return PreferredSize(
       preferredSize: preferredSize,
       child: Container(
+        margin: EdgeInsets.fromLTRB(
+            0, MediaQuery.of(context).viewPadding.top, 0, 0),
         color: Colors.white,
         width: MediaQuery.of(context).size.width,
-        height: 82,
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 16),
         child: Row(
           children: [
             Expanded(
