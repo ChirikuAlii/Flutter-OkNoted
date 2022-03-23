@@ -19,6 +19,9 @@ class _MyHomePageState extends State<MyHomePage> {
   final titleEditController = TextEditingController();
   final descEditController = TextEditingController();
 
+  final titleDetailEditController = TextEditingController();
+  final descDetailEditController = TextEditingController();
+
   final snackBar = SnackBar(
     content: const Text('Yay! A SnackBar!'),
     action: SnackBarAction(
@@ -53,6 +56,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       return InkWell(
                         child: widgetListNote(items[index]),
                         onTap: () => {
+                          titleDetailEditController.value =
+                              TextEditingValue(text: items[index].title),
+                          descDetailEditController.value =
+                              TextEditingValue(text: items[index].desc),
                           showModalBottomSheet(
                               isScrollControlled: true,
                               backgroundColor: Colors.transparent,
@@ -257,75 +264,122 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget widgetDetailNote(NoteModel item) {
-    return DraggableScrollableSheet(
-        initialChildSize: 0.4,
-        maxChildSize: 0.96,
-        builder: (_, controller) {
-          return Container(
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-            child: ListView(
-              controller: controller,
-              children: [
-                Container(
-                  padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        Navigator.of(context).pop();
+      },
+      child: GestureDetector(
+        onTap: () {},
+        child: Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: DraggableScrollableSheet(
+              initialChildSize: 0.4,
+              maxChildSize: 0.96,
+              builder: (_, controller) {
+                return Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(8))),
+                  child: ListView(
+                    controller: controller,
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                              width: 8,
-                              height: 8.0,
-                              decoration: new BoxDecoration(
-                                color: Colors.orange,
-                                shape: BoxShape.circle,
-                              )),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text(item.project),
-                          Expanded(child: Container()),
-                          Text(
-                            convertFormatDate(
-                                item.date, "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"),
-                            style: TextStyle(
-                                color: AppColors.greyDim, fontSize: 14),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Text(
-                        item.title,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Text(
-                        item.desc,
-                        style:
-                            TextStyle(color: AppColors.greyDim, fontSize: 16),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                    width: 8,
+                                    height: 8.0,
+                                    decoration: new BoxDecoration(
+                                      color: Colors.orange,
+                                      shape: BoxShape.circle,
+                                    )),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text(item.project),
+                                Expanded(child: Container()),
+                                Text(
+                                  convertFormatDate(item.date,
+                                      "yyyy-MM-dd HH:mm:ss", "dd-MM-yyyy"),
+                                  style: TextStyle(
+                                      color: AppColors.greyDim, fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            TextField(
+                              onTap: () {
+                                print("tampil edit task");
+                              },
+                              onEditingComplete: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                String title = titleDetailEditController.text;
+                                String desc = descDetailEditController.text;
+                                doUpdateTitleOrDesc(title, desc, item);
+                              },
+                              controller: titleDetailEditController,
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                  hintStyle: TextStyle(color: Colors.black)),
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            TextField(
+                              onEditingComplete: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                String title = titleDetailEditController.text;
+                                String desc = descDetailEditController.text;
+                                doUpdateTitleOrDesc(title, desc, item);
+                              },
+                              controller: descDetailEditController,
+                              style: TextStyle(
+                                  color: AppColors.greyDim, fontSize: 16),
+                              decoration: InputDecoration(
+                                  isDense: true,
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.zero,
+                                  hintStyle: TextStyle(color: Colors.black)),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          );
-        });
+                );
+              }),
+        ),
+      ),
+    );
+  }
+
+  void doUpdateTitleOrDesc(String title, String desc, NoteModel oldItem) {
+    NoteModel updateNote = NoteModel(
+        title: title, date: oldItem.date, desc: desc, project: oldItem.project);
+    editNote(updateNote, oldItem.key);
   }
 
   Future addNote(NoteModel note) async {
     setState(() {
       NoteDao.addNote(note);
       Navigator.of(context).pop();
-      //items.add(note);
     });
+  }
+
+  Future editNote(NoteModel note, int key) async {
+    NoteDao.editNote(note, key);
   }
 
   String convertFormatDate(

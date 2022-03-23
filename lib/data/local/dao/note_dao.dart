@@ -13,4 +13,17 @@ class NoteDao {
   static addNote(NoteModel item) async {
     await noteBox.add(item);
   }
+
+  static deleteNote(NoteModel item) async {
+    await noteBox.delete(item.key);
+  }
+
+  static editNote(NoteModel item, key) async {
+    NoteModel newNote = NoteModel(
+        title: item.title,
+        date: item.date,
+        desc: item.desc,
+        project: item.project);
+    await noteBox.put(key, newNote);
+  }
 }
