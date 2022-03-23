@@ -316,9 +316,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               height: 16,
                             ),
                             TextField(
-                              onTap: () {
-                                print("tampil edit task");
-                              },
                               onEditingComplete: () {
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 String title = titleDetailEditController.text;
@@ -337,21 +334,45 @@ class _MyHomePageState extends State<MyHomePage> {
                             SizedBox(
                               height: 16,
                             ),
-                            TextField(
-                              onEditingComplete: () {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                String title = titleDetailEditController.text;
-                                String desc = descDetailEditController.text;
-                                doUpdateTitleOrDesc(title, desc, item);
-                              },
-                              controller: descDetailEditController,
-                              style: TextStyle(
-                                  color: AppColors.greyDim, fontSize: 16),
-                              decoration: InputDecoration(
-                                  isDense: true,
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.zero,
-                                  hintStyle: TextStyle(color: Colors.black)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    onEditingComplete: () {
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
+                                      String title =
+                                          titleDetailEditController.text;
+                                      String desc =
+                                          descDetailEditController.text;
+                                      doUpdateTitleOrDesc(title, desc, item);
+                                    },
+                                    controller: descDetailEditController,
+                                    style: TextStyle(
+                                        color: AppColors.greyDim, fontSize: 16),
+                                    decoration: InputDecoration(
+                                        isDense: true,
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.zero,
+                                        hintStyle:
+                                            TextStyle(color: Colors.black)),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 16,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    deleteNote(item);
+                                  },
+                                  child: SvgPicture.asset(
+                                    AppVectors.trash,
+                                    height: 22,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -372,14 +393,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future addNote(NoteModel note) async {
-    setState(() {
-      NoteDao.addNote(note);
-      Navigator.of(context).pop();
-    });
+    NoteDao.addNote(note);
+    Navigator.of(context).pop();
   }
 
   Future editNote(NoteModel note, int key) async {
     NoteDao.editNote(note, key);
+  }
+
+  Future deleteNote(NoteModel note) async {
+    NoteDao.deleteNote(note);
   }
 
   String convertFormatDate(

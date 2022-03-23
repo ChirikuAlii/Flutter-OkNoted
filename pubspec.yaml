@@ -73,6 +73,7 @@ flutter:
     - assets/toolbar/more.svg
     - assets/ic_searchh.svg
     - assets/ic_notification.svg
+    - assets/ic_trash.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
