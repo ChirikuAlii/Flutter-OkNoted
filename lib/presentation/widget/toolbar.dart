@@ -20,7 +20,7 @@ class OkNotedToolbar extends StatelessWidget with PreferredSizeWidget {
               child: Container(
                 margin: EdgeInsets.fromLTRB(16, 82 / 3, 0, 0),
                 child: Text(
-                  "Mau inget apa ni?",
+                  "What do you want to note?",
                   textAlign: TextAlign.start,
                   style: TextStyle(fontSize: 20, color: Color(0xff1A1A1A)),
                 ),
